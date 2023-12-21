@@ -1,0 +1,23 @@
+package com.demo.dao;
+
+import java.util.List;
+import com.demo.model.User;
+
+public class UserDAO implements IUserDAO {
+	public Connection getConnection() {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			String url = "jdbc:mysql://localhost:3306/pro_2023_04_16_02_07";
+			String user = "root";
+			String password = "";
+			return DriverManager.getConnection(url, user, password);
+		} catch (ClassNotFoundException | SQLException e) {
+			return null;
+		}
+	}
+	@Override
+	public List<User> findOne() {
+		String sql = "SELECT * FROM PKERP.T_CM_USMT WHERE USERID =?";
+		return null;
+	}
+}

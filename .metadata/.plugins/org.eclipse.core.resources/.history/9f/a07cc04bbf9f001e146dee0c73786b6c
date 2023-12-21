@@ -1,0 +1,48 @@
+package com.demo.controller;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.demo.model.User;
+
+@WebServlet(urlPatterns = { "/home", "/login", "/logout" })
+public class HomeController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	String requestURI;
+
+	public HomeController() {
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		requestURI = req.getRequestURI();
+
+		if (requestURI.endsWith("/login")) {
+			req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
+		} else if (requestURI.endsWith("/logout")) {
+			req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
+		} else if (requestURI.endsWith("/home")) {
+			req.getRequestDispatcher("/views/home.jsp").forward(req, resp);
+		}
+
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String userID, roleID;
+		requestURI = req.getRequestURI();
+		if (requestURI.endsWith("/login")) {
+			userID = req.getParameter("userID");
+			roleID = req.getParameter("roleID");
+			User userInfo = new User(userID, roleID);
+			req.getSession().setAttribute("userInfo", userInfo);
+			resp.sendRedirect("home.jsp");
+		}
+
+	}
+}

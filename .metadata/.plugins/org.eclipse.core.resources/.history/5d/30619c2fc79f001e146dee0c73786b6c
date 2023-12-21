@@ -1,0 +1,72 @@
+package com.demo.controller;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.demo.model.User;
+
+@WebServlet(urlPatterns = { "/home", "/login", "/logout" })
+public class HomeController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	String requestURI;
+
+	public HomeController() {
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		requestURI = req.getRequestURI();
+
+        if (requestURI.endsWith("/home")) {
+            // Check session for /home
+            HttpSession session = req.getSession(false);
+            if (session == null || session.getAttribute("username") == null) {
+                // Session does not exist, redirect to login page
+                resp.sendRedirect(req.getContextPath() + "/views/login.jsp");
+            } else {
+                // Session exists, forward to home page
+            	req.getRequestDispatcher("/views/home.jsp").forward(req, resp);
+            }
+        } else if (requestURI.endsWith("/login")) {
+            // Handle /login logic if needed
+            // For example, forward to a login page
+        	req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
+        } else if (requestURI.endsWith("/logout")) {
+            // Handle /logout logic if needed
+            // For example, invalidate session and redirect to login page
+            HttpSession session = req.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            resp.sendRedirect(req.getContextPath() + "/views/login.jsp");
+        } else {
+            // Handle other URL patterns or show an error page
+        	resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String userID, roleID,password,remmerberMe;
+		requestURI = req.getRequestURI();
+		if (requestURI.endsWith("/login")) {
+			userID = req.getParameter("userID");
+			roleID = req.getParameter("roleID");
+			password = req.getParameter("psw");
+			remmerberMe = req.getParameter("remmerberMe");
+			User userInfo = new User(userID, roleID);
+			req.getSession().setAttribute("password", password);
+			req.getSession().setAttribute("remmerberMe", remmerberMe);
+			req.getSession().setAttribute("userInfo", userInfo);
+			resp.sendRedirect(req.getContextPath() + "/views//home");
+		}
+
+	}
+}
