@@ -9,8 +9,7 @@ public class UserService implements IUserService {
 	private IUserDAO userDAO;
 
 	@Override
-	public Optional<User> getUserById(String id) throws ClassNotFoundException {
-		String status = "OK"
+	public Optional<User> getUserById(String id, String status) throws ClassNotFoundException {
 		return userDAO.getUserById(id, status);
 	}
 }
