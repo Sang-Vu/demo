@@ -6,4 +6,13 @@
     <fullyQualifiedTypeName name="com.demo.model.User"/>
     <fullyQualifiedTypeName name="com.demo.dao.IUserDAO"/>
     <fullyQualifiedTypeName name="com.demo.dao.UserDAO"/>
+    <fullyQualifiedTypeName name="javax.inject.Inject"/>
+    <fullyQualifiedTypeName name="com.demo.service.IUserService"/>
+    <fullyQualifiedTypeName name="com.fasterxml.jackson.databind.ObjectMapper"/>
+    <fullyQualifiedTypeName name="com.demo.model.RequestLoginParams"/>
+    <fullyQualifiedTypeName name="com.demo.service.UserService"/>
+    <fullyQualifiedTypeName name="java.util.Base64.Decoder"/>
+    <fullyQualifiedTypeName name="java.io.ByteArrayInputStream"/>
+    <fullyQualifiedTypeName name="javax.crypto.CipherInputStream"/>
+    <fullyQualifiedTypeName name="javax.crypto.SecretKey"/>
 </qualifiedTypeNameHistroy>

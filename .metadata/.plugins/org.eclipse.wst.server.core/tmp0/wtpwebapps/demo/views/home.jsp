@@ -1,7 +1,8 @@
-<%@ page import="com.demo.model.User" %>
-<%@ page import="javax.servlet.http.HttpSession" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ include file="/common/taglib.jsp"%>
+<%@ page import="com.demo.model.User" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,22 +11,18 @@
 </head>
 <body>
 <%
-        // Retrieve user information from the session
-        session = request.getSession();
-	User user = (User) session.getAttribute("userInfo");
+   // session = request.getSession(false);
+//	User user = (User) session.getAttribute("userInfo");
+	//String remmerberMe = (String) session.getAttribute("remmerberMe");
     %>
 	<h1>Welcome to home page</h1>
 	<h2>User Information</h2>
- <%   if (user != null) {
-%>
-    <p>User ID: <%= user.getUserID() %></p>
-    <p>Role ID: <%= user.getRoleID() %></p>
-    <p>Remember Me: </p>
-    <!-- Add more fields as needed -->
-<%
-    }
-%>
-    <p>Password: </p>
-    <p>Remember Me: </p>
+
+    <p>User ID: ${userInfo.getUserID()}</p>
+    <p>Name: ${userInfo.getName()}</p>
+    <p>Role ID: ${userInfo.getRoleID()}</p>
+    <p>Remember me: ${remmemberMe}</p>
+
+
 </body>
 </html>
