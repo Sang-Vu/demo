@@ -3,8 +3,14 @@ package com.demo.controller;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import com.demo.model.RequestLoginParams;
 import com.demo.model.User;
 import com.demo.service.IUserService;
+import com.demo.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebServlet(urlPatterns = { "/home", "/login", "/logout" })
@@ -41,17 +48,25 @@ public class HomeController extends HttpServlet {
 			RequestLoginParams _requestLoginParams = new RequestLoginParams("", "PCMV1", "http://localhost:8080/demo/home");
 			ObjectMapper objectMapper = new ObjectMapper();
 			String stringParams = objectMapper.writeValueAsString(_requestLoginParams);
+			try {
+				UserService.decrypt_n();
+			} catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException
+					| NoSuchPaddingException | InvalidAlgorithmParameterException | IllegalBlockSizeException
+					| BadPaddingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			//String text = "{\"Cookie\":null,\"AfterLoginPage\":\"http://google.com\",\"SystemName\":\"PCMV1\"}";
 			//String key = "4c454b8a-31d6-11ee-be56-0242ac120002";
-			String key = "1";
-	String request;
-	try {
-		request = _userService.encrypt2(stringParams, key);System.out.println(request);
-	//	String url = "https://sso.pungkookvn.com/Account/Index?request=" + request;resp.sendRedirect(url);
-	} catch (UnsupportedEncodingException | InvalidKeySpecException | InvalidAlgorithmParameterException e) {
-
-		e.printStackTrace();
-	}
+		//	String key = "1";
+	//String request;
+//	try {
+//		UserService.encrypt_n(stringParams);
+//	} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException
+//			| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
 			//String request2 = _userService.encrypt3(stringParams, key);
 			//String url = "https://sso.pungkookvn.com/Account/Index?request=" + request2;resp.sendRedirect(url);
 			//System.out.println(request);

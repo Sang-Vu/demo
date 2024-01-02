@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -38,6 +39,69 @@ public class UserService implements IUserService {
 		String status = "OK";
 		return userDAO.getUserById_Role_Pass(id, role, pass, status);
 	}
+	public static void encrypt_n(String info) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
+		// Your key as a string
+        String keyString = "4c454b8a31d611eebe560242ac120002";
+
+     // Convert the key string to bytes using UTF-8 encoding
+        byte[] keyBytes = keyString.getBytes("UTF-8");
+        
+     // Generate a secret key from the key bytes
+        SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
+        
+        // Generate a random IV
+        byte[] iv = generateRandomIV();
+
+        // Create a cipher and initialize with the secret key and IV
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(iv));
+
+        // Encrypt the data
+        byte[] encryptedData = cipher.doFinal(info.getBytes());
+
+        // Print the encrypted data
+        System.out.println("Encrypted Data (Base64): " + Base64.getEncoder().encodeToString(encryptedData));
+        // Print the IV (for sharing with the C# application)
+        System.out.println("IV (Base64): " + Base64.getEncoder().encodeToString(iv));
+	}
+	
+	public static void decrypt_n() throws UnsupportedEncodingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+		// Base64-encoded IV and encrypted data received from C#
+        String base64IV = "6W9F84fd1AaSOwxWhcDeQw==";
+        String base64EncryptedData = "ftbTEwuyzJgbIQnAYzqBaaFbYPdo9XriQVjXAJ9CjEaYcYH3wxRVP7QktJPy0D8lhKzaJhWi8AW5Rlr1n1chazESX7zketp/w+k7FeTORk0=";
+
+        // Convert Base64 strings to byte arrays
+        byte[] iv = Base64.getDecoder().decode(base64IV);
+        byte[] encryptedData = Base64.getDecoder().decode(base64EncryptedData);
+
+        // Your key as a string (must be 16, 24, or 32 bytes for AES-128, AES-192, or AES-256)
+        String keyString = "4c454b8a31d611eebe560242ac120002";
+
+        // Convert key string to bytes
+        byte[] keyBytes = keyString.getBytes("UTF-8");
+
+        // Create AES decryptor
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(iv));
+
+        // Decrypt the data
+        byte[] decryptedData = cipher.doFinal(encryptedData);
+
+        // Convert the decrypted data to a string
+        String decryptedText = new String(decryptedData, "UTF-8");
+
+        // Print the decrypted text
+        System.out.println("Decrypted Text: " + decryptedText);
+      //  return decryptedText;
+	}
+	
+	private static byte[] generateRandomIV() {
+        // Generate a random IV using SecureRandom
+        byte[] iv = new byte[16]; // IV size for AES is typically 16 bytes
+        new SecureRandom().nextBytes(iv);
+        return iv;
+    }
 
 	@Override
 	public String encrypt(String text, String pwd)
@@ -89,7 +153,7 @@ public class UserService implements IUserService {
             SecretKey secretKey = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
 
             // Encrypt the data using Cipher
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");//PKCS5Padding
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
             // Use IV from Cipher
@@ -168,7 +232,7 @@ public class UserService implements IUserService {
 		// Use the IV from the key derivation
 		IvParameterSpec ivParameterSpec = new IvParameterSpec(factory.generateSecret(spec).getEncoded());
 
-		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");//PKCS5Padding
 		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
 		try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
